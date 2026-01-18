@@ -16,13 +16,16 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { supabase } from "@/lib/supabaseClient"; 
+import { supabase } from "@/lib/supabaseClient";
 import { format } from "date-fns";
 import { BookOpen, Bug, Code2, Loader2, Trash2, Wand2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { Header } from "@/components/Header";
+
+// ⚠️ CRITICAL FOR BUILD: Prevents "Export encountered an error"
+export const dynamic = "force-dynamic";
 
 interface HistoryItem {
     id: string;
@@ -56,7 +59,7 @@ export default function HistoryPage() {
     const fetchHistory = async () => {
         try {
             const { data, error } = await supabase
-                .from("history") // Matches your DB table name
+                .from("history")
                 .select("*")
                 .order("created_at", { ascending: false });
 
@@ -66,12 +69,11 @@ export default function HistoryPage() {
             const formattedData: HistoryItem[] = (data || []).map(
                 (item: any) => ({
                     id: item.id,
-                    
                     code: item.mode === "generate" ? "" : item.prompt,
                     user_prompt: item.mode === "generate" ? item.prompt : null,
                     language: item.language || "text",
-                    action_type: item.mode, 
-                    ai_response: item.code_output, 
+                    action_type: item.mode,
+                    ai_response: item.code_output,
                     created_at: item.created_at,
                 }),
             );
@@ -123,7 +125,7 @@ export default function HistoryPage() {
 
     return (
         <div className="h-screen flex flex-col bg-background">
-            <Header /> 
+            <Header />
             <main className="flex-1 overflow-hidden p-6 bg-[#0a0a0a] text-foreground">
                 <div className="max-w-4xl mx-auto h-full flex flex-col">
                     {/* HEADER */}
