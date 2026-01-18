@@ -24,7 +24,8 @@ import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import { Header } from "@/components/Header";
 
-// ⚠️ CRITICAL FOR BUILD: Prevents "Export encountered an error"
+// ⚠️ THIS FIXES THE BUILD ERROR ⚠️
+// It tells Next.js not to pre-render this page on the server.
 export const dynamic = "force-dynamic";
 
 interface HistoryItem {
@@ -55,9 +56,9 @@ export default function HistoryPage() {
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
 
-    // --- 1. FETCH HISTORY FROM SUPABASE ---
     const fetchHistory = async () => {
         try {
+            // Fetch data from Supabase
             const { data, error } = await supabase
                 .from("history")
                 .select("*")
@@ -65,7 +66,7 @@ export default function HistoryPage() {
 
             if (error) throw error;
 
-            // Map DB columns to UI Interface
+            // Format the data
             const formattedData: HistoryItem[] = (data || []).map(
                 (item: any) => ({
                     id: item.id,
@@ -91,32 +92,22 @@ export default function HistoryPage() {
         }
     };
 
-    // Run on page load
     useEffect(() => {
         fetchHistory();
     }, []);
 
-    // --- 2. DELETE ITEM LOGIC ---
     const deleteItem = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent opening the modal when clicking delete
-
+        e.stopPropagation();
         try {
             const { error } = await supabase
                 .from("history")
                 .delete()
                 .eq("id", id);
-
             if (error) throw error;
-
-            // Update UI immediately
             setHistory((prev) => prev.filter((item) => item.id !== id));
-
             toast({ title: "Entry deleted successfully" });
         } catch (error) {
-            toast({
-                title: "Failed to delete",
-                variant: "destructive",
-            });
+            toast({ title: "Failed to delete", variant: "destructive" });
         }
     };
 
@@ -128,7 +119,6 @@ export default function HistoryPage() {
             <Header />
             <main className="flex-1 overflow-hidden p-6 bg-[#0a0a0a] text-foreground">
                 <div className="max-w-4xl mx-auto h-full flex flex-col">
-                    {/* HEADER */}
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h1 className="text-2xl font-bold">Code History</h1>
@@ -136,13 +126,11 @@ export default function HistoryPage() {
                                 Your previous AI interactions
                             </p>
                         </div>
-
                         <Badge variant="outline" className="bg-secondary">
                             {history.length} entries
                         </Badge>
                     </div>
 
-                    {/* LIST */}
                     <ScrollArea className="flex-1 pr-4">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground gap-2">
@@ -161,7 +149,6 @@ export default function HistoryPage() {
                                 {history.map((item) => {
                                     const Icon =
                                         actionIcons[item.action_type] || Code2;
-
                                     return (
                                         <Card
                                             key={item.id}
@@ -174,17 +161,10 @@ export default function HistoryPage() {
                                                 <div className="flex justify-between">
                                                     <div className="flex gap-3">
                                                         <div
-                                                            className={`p-2 rounded-lg h-fit ${
-                                                                actionColors[
-                                                                    item
-                                                                        .action_type
-                                                                ] ||
-                                                                "bg-secondary text-secondary-foreground"
-                                                            }`}
+                                                            className={`p-2 rounded-lg h-fit ${actionColors[item.action_type] || "bg-secondary text-secondary-foreground"}`}
                                                         >
                                                             <Icon className="w-4 h-4" />
                                                         </div>
-
                                                         <div>
                                                             <CardTitle className="capitalize text-base">
                                                                 {
@@ -201,12 +181,10 @@ export default function HistoryPage() {
                                                             </CardDescription>
                                                         </div>
                                                     </div>
-
                                                     <div className="flex gap-2 items-start">
                                                         <Badge variant="secondary">
                                                             {item.language.toUpperCase()}
                                                         </Badge>
-
                                                         <Button
                                                             size="icon"
                                                             variant="ghost"
@@ -223,7 +201,6 @@ export default function HistoryPage() {
                                                     </div>
                                                 </div>
                                             </CardHeader>
-
                                             <CardContent>
                                                 <div className="bg-secondary/50 rounded-lg p-3 font-mono text-xs text-muted-foreground break-all">
                                                     {item.action_type ===
@@ -246,7 +223,6 @@ export default function HistoryPage() {
                 </div>
             </main>
 
-            {/* MODAL */}
             <Dialog
                 open={!!selectedItem}
                 onOpenChange={() => setSelectedItem(null)}
@@ -266,11 +242,9 @@ export default function HistoryPage() {
                             )}
                         </DialogTitle>
                     </DialogHeader>
-
                     <ScrollArea className="flex-1 pr-4">
                         {selectedItem && (
                             <div className="space-y-6 p-1">
-                                {/* PROMPT / CODE SECTION */}
                                 {selectedItem.action_type === "generate" ? (
                                     <div>
                                         <h4 className="text-sm font-medium mb-2 text-muted-foreground">
@@ -290,8 +264,6 @@ export default function HistoryPage() {
                                         </pre>
                                     </div>
                                 )}
-
-                                {/* AI RESPONSE SECTION */}
                                 <div>
                                     <h4 className="text-sm font-medium mb-2 text-muted-foreground">
                                         AI Response
