@@ -1,65 +1,121 @@
-import Image from "next/image";
+// "use client";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+// import { useRef, useState } from "react";
+// import { Header } from "@/components/Header";
+// import { CodeEditor } from "@/components/CodeEditor";
+// import { AiPanel } from "@/components/AiPanel";
+// import { UserButton } from "@clerk/nextjs";
+// import { auth } from "@clerk/nextjs/server";
+// import { redirect } from "next/navigation";
+
+// const defaultCode = `// Welcome to CodeMind AI!
+// // Enter your code here and use the AI assistant to:
+// // - Debug your code
+// // - Get explanations
+// // - Generate new code
+
+// function greet(name) {
+//   console.log("Hello, " + name);
+// }
+
+// greet("World");
+// `;
+
+// export default function Home() {
+//      const [language, setLanguage] = useState("javascript");
+//      const [code, setCode] = useState(defaultCode);
+//     const containerRef = useRef<HTMLDivElement>(null);
+//     const [leftWidth, setLeftWidth] = useState(55);
+
+//     // const { userId } = auth();
+//     // // console.log("User ID:", userId);
+//     //  if (!userId) {
+//     //      redirect("/sign-in");
+//     //  }
+
+//     const startResize = (e: React.MouseEvent) => {
+//         e.preventDefault();
+//         const startX = e.clientX;
+//         const startWidth = leftWidth;
+
+//         const onMouseMove = (moveEvent: MouseEvent) => {
+//             if (!containerRef.current) return;
+//             const delta = moveEvent.clientX - startX;
+//             const containerWidth = containerRef.current.offsetWidth;
+//             const newWidth =
+//                 (((startWidth / 100) * containerWidth + delta) /
+//                     containerWidth) *
+//                 100;
+
+//             setLeftWidth(Math.min(75, Math.max(25, newWidth)));
+//         };
+
+//         const onMouseUp = () => {
+//             document.removeEventListener("mousemove", onMouseMove);
+//             document.removeEventListener("mouseup", onMouseUp);
+//         };
+
+//         document.addEventListener("mousemove", onMouseMove);
+//         document.addEventListener("mouseup", onMouseUp);
+//     };
+
+//     return (
+
+//         <div className="h-screen flex flex-col bg-background">
+//             <Header />
+
+//             {/* ===== MOBILE (STACKED) ===== */}
+//             <div className="flex flex-col flex-1 md:hidden overflow-auto">
+//                 <div className="min-h-[50vh] border-b border-border">
+//                     <CodeEditor
+//                         code={code}
+//                         setCode={setCode}
+//                         language={language}
+//                         setLanguage={setLanguage}
+//                     />
+//                 </div>
+//                 <div className="min-h-[100vh]">
+//                     <AiPanel code={code} language={language} />
+//                 </div>
+//             </div>
+
+//             {/* 2. CLERK USER BUTTON (Avatar + Logout) */}
+
+//             {/* ===== DESKTOP / TABLET (RESIZABLE) ===== */}
+//             <div
+//                 ref={containerRef}
+//                 className="hidden md:flex flex-1 overflow-hidden"
+//             >
+//                 {/* LEFT */}
+//                 <div style={{ width: `${leftWidth}%` }} className="h-full">
+//                     <CodeEditor
+//                         code={code}
+//                         setCode={setCode}
+//                         language={language}
+//                         setLanguage={setLanguage}
+//                     />
+//                 </div>
+
+//                 {/* RESIZE HANDLE */}
+//                 <div
+//                     onMouseDown={startResize}
+//                     className="w-1 cursor-col-resize bg-border hover:bg-primary transition-colors"
+//                 />
+
+//                 {/* RIGHT */}
+//                 <div
+//                     style={{ width: `${100 - leftWidth}%` }}
+//                     className="h-full"
+//                 >
+//                     <AiPanel code={code} language={language} />
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+import HomePage from "./HomePage";
+
+export default function Page() {
+    return <HomePage />;
 }
